@@ -1,3 +1,4 @@
+#Intento de agregar de manera iterativa
 library(dplyr)
 library(readr)
 library(stringr)
