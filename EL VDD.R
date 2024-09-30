@@ -164,3 +164,35 @@ while (total_farmacias_needed < 200) {
     if (total_farmacias_needed < 200 && mcdonalds_least_farmacias$farmacias_needed[i] < 3) {
       mcdonalds_least_farmacias$farmacias_count[i] <- mcdonalds_least_farmacias$farmacias_count[i] + 1
       mcdonalds_least_farmacias$farmacias_needed[i] <- mcdonalds
+   while (farmacias_added < mcdonalds_least_farmacias$farmacias_needed[i]) {
+    angle <- runif(1, 0, 2 * pi)
+    distance <- runif(1, 0, 2)
+    new_lat <- mcdonalds_least_farmacias$latitud[i] + (distance / 111) * cos(angle)
+    new_lng <- mcdonalds_least_farmacias$longitud[i] + (distance / (111 * cos(mcdonalds_least_farmacias$latitud[i] * pi / 180))) * sin(angle)
+    
+    if (all(sqrt((global_added_points$lat - new_lat)^2 + (global_added_points$lng - new_lng)^2) > 0.01) &&
+        all(sqrt((added_points$lat - new_lat)^2 + (added_points$lng - new_lng)^2) > 0.01)) {
+      
+      added_points <- rbind(added_points, data.frame(lat = new_lat, lng = new_lng))
+      global_added_points <- rbind(global_added_points, data.frame(lat = new_lat, lng = new_lng))
+      
+      map <- map %>%
+        addCircleMarkers(
+          lat = new_lat,
+          lng = new_lng,
+          radius = 3,
+          color = "blue",
+          fill = TRUE,
+          fillColor = "blue",
+          fillOpacity = 0.5,
+          popup = paste("New Farmacia near", mcdonalds_least_farmacias$nom_estab[i])
+        )
+      
+      farmacias_added <- farmacias_added + 1
+    }
+  }
+}
+
+
+saveWidget(map, "C:/Users/Ating/OneDrive/Desktop/mcdonalds_farmacias_mapbueno.html", selfcontained = TRUE)
+
